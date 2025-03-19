@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,20 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				real: {
+					50: '#f7f9fc',
+					100: '#eef2f9',
+					200: '#d4dff0',
+					300: '#b9cce7',
+					400: '#85a5d5',
+					500: '#517fc3',
+					600: '#4972b0',
+					700: '#3d5f93',
+					800: '#314c76',
+					900: '#283e61',
+					950: '#1a2942',
+				},
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -70,26 +84,98 @@ export default {
 			},
 			keyframes: {
 				'accordion-down': {
-					from: {
-						height: '0'
-					},
-					to: {
-						height: 'var(--radix-accordion-content-height)'
-					}
+					from: { height: '0' },
+					to: { height: 'var(--radix-accordion-content-height)' },
 				},
 				'accordion-up': {
-					from: {
-						height: 'var(--radix-accordion-content-height)'
+					from: { height: 'var(--radix-accordion-content-height)' },
+					to: { height: '0' },
+				},
+				'fade-in': {
+					from: { opacity: '0' },
+					to: { opacity: '1' },
+				},
+				'fade-up': {
+					from: { 
+						opacity: '0',
+						transform: 'translateY(20px)'
 					},
-					to: {
-						height: '0'
-					}
-				}
+					to: { 
+						opacity: '1',
+						transform: 'translateY(0)'
+					},
+				},
+				'fade-down': {
+					from: { 
+						opacity: '0',
+						transform: 'translateY(-20px)'
+					},
+					to: { 
+						opacity: '1',
+						transform: 'translateY(0)'
+					},
+				},
+				'scale-in': {
+					from: { 
+						opacity: '0',
+						transform: 'scale(0.95)'
+					},
+					to: { 
+						opacity: '1',
+						transform: 'scale(1)'
+					},
+				},
+				'slide-in-right': {
+					from: { 
+						transform: 'translateX(100%)',
+					},
+					to: { 
+						transform: 'translateX(0)',
+					},
+				},
+				'slide-out-right': {
+					from: { 
+						transform: 'translateX(0)',
+					},
+					to: { 
+						transform: 'translateX(100%)',
+					},
+				},
+				'blur-in': {
+					from: { 
+						opacity: '0',
+						filter: 'blur(8px)',
+					},
+					to: { 
+						opacity: '1',
+						filter: 'blur(0)',
+					},
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
-			}
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 0.7s ease-out',
+				'fade-up': 'fade-up 0.7s ease-out',
+				'fade-down': 'fade-down 0.7s ease-out',
+				'scale-in': 'scale-in 0.7s ease-out',
+				'slide-in-right': 'slide-in-right 0.3s ease-out',
+				'slide-out-right': 'slide-out-right 0.3s ease-out',
+				'blur-in': 'blur-in 0.7s ease-out',
+			},
+			fontFamily: {
+				sans: ['Inter', 'sans-serif'],
+				display: ['SF Pro Display', 'Inter', 'sans-serif']
+			},
+			boxShadow: {
+				'glass': '0 4px 30px rgba(0, 0, 0, 0.1)',
+				'elevation-1': '0 2px 4px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.06)',
+				'elevation-2': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+				'elevation-3': '0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+			},
+			backdropBlur: {
+				'glass': '8px',
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
