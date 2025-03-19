@@ -1,9 +1,32 @@
 
-import { ArrowRight, Rotate3D } from 'lucide-react';
+import { useEffect } from 'react';
+import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PropertyCard from './PropertyCard';
+import { usePropertyStore } from '@/store/usePropertyStore';
+import { Link } from 'react-router-dom';
 
 const Properties = () => {
+  const { properties, fetchProperties, isLoading } = usePropertyStore();
+  
+  useEffect(() => {
+    fetchProperties();
+  }, [fetchProperties]);
+  
+  // Select featured properties, if there are less than 3 featured properties,
+  // fill the rest with non-featured ones to always have 3 properties
+  const featuredProperties = properties.filter(p => p.featured);
+  const nonFeaturedProperties = properties.filter(p => !p.featured);
+  
+  const displayProperties = [...featuredProperties];
+  
+  if (displayProperties.length < 3) {
+    displayProperties.push(...nonFeaturedProperties.slice(0, 3 - displayProperties.length));
+  }
+  
+  // Limit to first 3 properties for the homepage
+  const limitedProperties = displayProperties.slice(0, 3);
+  
   return (
     <section id="properties" className="section-padding bg-slate-50">
       <div className="container-custom">
@@ -17,57 +40,36 @@ const Properties = () => {
         </div>
         
         {/* Properties grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {featuredProperties.map((property, index) => (
-            <PropertyCard 
-              key={property.id} 
-              property={property}
-              className={`animate-scale-in stagger-delay-${index + 1}`}
-            />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-96 animate-pulse bg-slate-200 rounded-xl"></div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {limitedProperties.map((property, index) => (
+              <PropertyCard 
+                key={property.id} 
+                property={property}
+                className={`animate-scale-in stagger-delay-${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
         
         {/* CTA button */}
         <div className="text-center animate-fade-up">
-          <Button variant="outline" className="group">
-            View All Properties
-            <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+          <Button variant="outline" className="group" asChild>
+            <Link to="/properties">
+              View All Properties
+              <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+            </Link>
           </Button>
         </div>
       </div>
     </section>
   );
 };
-
-const featuredProperties = [
-  {
-    id: '1',
-    title: 'Modern Office Building',
-    location: 'Lagos, Nigeria',
-    price: 'NGN 350,000,000',
-    size: '12,000 sq ft',
-    type: 'Commercial',
-    image: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-    featured: true,
-  },
-  {
-    id: '2',
-    title: 'Prime Development Land',
-    location: 'Abuja, Nigeria',
-    price: 'NGN 75,000,000',
-    size: '5 acres',
-    type: 'Land',
-    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80',
-  },
-  {
-    id: '3',
-    title: 'Luxury Residential Complex',
-    location: 'Port Harcourt, Nigeria',
-    price: 'NGN 520,000,000',
-    size: '35,000 sq ft',
-    type: 'Residential',
-    image: 'https://images.unsplash.com/photo-1460317442991-0ec209397118?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-  },
-];
 
 export default Properties;
