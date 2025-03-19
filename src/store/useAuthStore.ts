@@ -43,9 +43,16 @@ export const useAuthStore = create<AuthState>()(
               .eq('id', data.user.id)
               .single();
               
-            if (adminError || !adminData) {
+            if (adminError) {
+              console.error('Admin check error:', adminError);
               await supabase.auth.signOut();
-              throw new Error('Not authorized as admin');
+              throw new Error(`Admin verification failed: ${adminError.message}`);
+            }
+            
+            if (!adminData) {
+              console.error('Not an admin user:', data.user.email);
+              await supabase.auth.signOut();
+              throw new Error('Not authorized as admin. This account is not registered as an admin.');
             }
             
             set({ 
@@ -54,8 +61,13 @@ export const useAuthStore = create<AuthState>()(
               isLoading: false,
               error: null
             });
+            
+            toast.success('Login successful', {
+              description: `Welcome back, ${data.user.email}`,
+            });
           }
         } catch (error) {
+          console.error('Login error:', error);
           set({ 
             error: error instanceof Error ? error.message : 'Authentication failed',
             isLoading: false,

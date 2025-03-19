@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { toast } from "sonner";
-import { Home, LogIn } from 'lucide-react';
+import { Home, LogIn, AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 const AdminLogin = () => {
@@ -93,7 +93,10 @@ const AdminLogin = () => {
             </div>
             
             {error && (
-              <div className="text-red-500 text-sm">{error}</div>
+              <div className="text-red-500 text-sm p-3 bg-red-50 rounded-md flex items-start">
+                <AlertCircle size={16} className="mr-2 mt-0.5 flex-shrink-0" />
+                <span>{error}</span>
+              </div>
             )}
             
             <Button 
