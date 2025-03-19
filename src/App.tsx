@@ -11,6 +11,9 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminLayout from "./components/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import PropertiesAdmin from "./pages/admin/PropertiesAdmin";
+import InquiriesAdmin from "./pages/admin/InquiriesAdmin";
+import UsersAdmin from "./pages/admin/UsersAdmin";
+import SettingsAdmin from "./pages/admin/SettingsAdmin";
 
 const queryClient = new QueryClient();
 
@@ -30,7 +33,9 @@ const App = () => (
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="properties" element={<PropertiesAdmin />} />
-            {/* Additional admin routes would go here */}
+            <Route path="inquiries" element={<InquiriesAdmin />} />
+            <Route path="users" element={<UsersAdmin />} />
+            <Route path="settings" element={<SettingsAdmin />} />
           </Route>
           
           {/* Catch-all route for 404 */}
