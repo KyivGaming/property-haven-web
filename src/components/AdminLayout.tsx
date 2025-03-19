@@ -5,7 +5,7 @@ import { Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { 
   Building, 
   LayoutDashboard, 
-  ListProperties, 
+  ListChecks, 
   LogOut, 
   MessageSquare, 
   Settings, 
@@ -82,7 +82,7 @@ const AdminLayout = () => {
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <a href="/admin/properties">
-                        <ListProperties />
+                        <ListChecks />
                         <span>Properties</span>
                       </a>
                     </SidebarMenuButton>
