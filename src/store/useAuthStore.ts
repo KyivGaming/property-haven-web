@@ -1,6 +1,8 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from "sonner";
 
 interface AuthState {
   user: { id: string; email: string } | null;
@@ -10,12 +12,13 @@ interface AuthState {
   
   // Actions
   login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
+  checkSession: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       isAuthenticated: false,
       isLoading: false,
@@ -25,30 +28,100 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null });
         
         try {
-          // Mock authentication - in real implementation, this would be replaced with Supabase auth
-          await new Promise(resolve => setTimeout(resolve, 800));
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+          });
           
-          // For demo purposes only - in production, use proper authentication
-          if (email === 'admin@oolproperties.com' && password === 'admin123') {
+          if (error) throw error;
+          
+          if (data?.user) {
+            // Check if the user is an admin
+            const { data: adminData, error: adminError } = await supabase
+              .from('admin_users')
+              .select('*')
+              .eq('id', data.user.id)
+              .single();
+              
+            if (adminError || !adminData) {
+              await supabase.auth.signOut();
+              throw new Error('Not authorized as admin');
+            }
+            
             set({ 
-              user: { id: '1', email },
+              user: { id: data.user.id, email: data.user.email || '' },
               isAuthenticated: true,
               isLoading: false,
               error: null
             });
-          } else {
-            throw new Error('Invalid email or password');
           }
         } catch (error) {
           set({ 
             error: error instanceof Error ? error.message : 'Authentication failed',
+            isLoading: false,
+            isAuthenticated: false,
+            user: null
+          });
+        }
+      },
+      
+      logout: async () => {
+        set({ isLoading: true });
+        
+        try {
+          await supabase.auth.signOut();
+          set({ user: null, isAuthenticated: false, error: null, isLoading: false });
+        } catch (error) {
+          set({ 
+            error: error instanceof Error ? error.message : 'Logout failed',
             isLoading: false 
           });
         }
       },
       
-      logout: () => {
-        set({ user: null, isAuthenticated: false, error: null });
+      checkSession: async () => {
+        set({ isLoading: true });
+        
+        try {
+          const { data } = await supabase.auth.getSession();
+          
+          if (data.session?.user) {
+            // Verify the user is an admin
+            const { data: adminData, error: adminError } = await supabase
+              .from('admin_users')
+              .select('*')
+              .eq('id', data.session.user.id)
+              .single();
+              
+            if (!adminError && adminData) {
+              set({ 
+                user: { 
+                  id: data.session.user.id, 
+                  email: data.session.user.email || '' 
+                },
+                isAuthenticated: true,
+                isLoading: false,
+                error: null
+              });
+              return;
+            }
+          }
+          
+          // If we got here, user is not authenticated or not an admin
+          set({ 
+            user: null, 
+            isAuthenticated: false, 
+            isLoading: false, 
+            error: null 
+          });
+        } catch (error) {
+          set({ 
+            user: null,
+            isAuthenticated: false,
+            isLoading: false,
+            error: error instanceof Error ? error.message : 'Session check failed'
+          });
+        }
       }
     }),
     {

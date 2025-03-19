@@ -27,31 +27,34 @@ import {
   SidebarGroupContent,
   SidebarInset
 } from './ui/sidebar';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from "sonner";
 
 const AdminLayout = () => {
-  const { isAuthenticated, logout } = useAuthStore();
+  const { isAuthenticated, logout, checkSession } = useAuthStore();
   const navigate = useNavigate();
-  const { toast } = useToast();
   
   useEffect(() => {
-    if (!isAuthenticated) {
+    // Check authentication status when component mounts
+    checkSession();
+  }, [checkSession]);
+  
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast.success("Logged out", {
+        description: "You have been successfully logged out",
+      });
       navigate('/admin/login');
+    } catch (error) {
+      toast.error("Logout failed", {
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
+      });
     }
-  }, [isAuthenticated, navigate]);
+  };
   
   if (!isAuthenticated) {
     return <Navigate to="/admin/login" />;
   }
-  
-  const handleLogout = () => {
-    logout();
-    toast({
-      title: "Logged out",
-      description: "You have been successfully logged out",
-    });
-    navigate('/admin/login');
-  };
   
   return (
     <SidebarProvider>
@@ -59,7 +62,7 @@ const AdminLayout = () => {
         <Sidebar variant="inset">
           <SidebarHeader>
             <div className="flex items-center px-2 py-4">
-              <Building className="h-8 w-8 text-real-700 mr-2" />
+              <Building className="h-8 w-8 text-primary mr-2" />
               <div>
                 <h1 className="font-bold tracking-tight">OOL Properties</h1>
                 <p className="text-xs text-muted-foreground">Admin Portal</p>

@@ -1,31 +1,52 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { toast } from "sonner";
 import { Home, LogIn } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login, isLoading, error } = useAuthStore();
+  const { login, isLoading, error, isAuthenticated, checkSession } = useAuthStore();
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { toast: uiToast } = useToast();
+  
+  useEffect(() => {
+    // Check if user is already authenticated
+    checkSession().then(() => {
+      const { isAuthenticated } = useAuthStore.getState();
+      if (isAuthenticated) {
+        navigate('/admin/dashboard');
+      }
+    });
+  }, [navigate, checkSession]);
   
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
     try {
       await login(email, password);
-      navigate('/admin/dashboard');
-      toast({
-        title: 'Login successful',
-        description: 'Welcome to the admin dashboard',
-      });
+      const { isAuthenticated, error } = useAuthStore.getState();
+      
+      if (isAuthenticated) {
+        navigate('/admin/dashboard');
+        toast.success('Login successful', {
+          description: 'Welcome to the admin dashboard',
+        });
+      } else if (error) {
+        toast.error('Login failed', {
+          description: error,
+        });
+      }
     } catch (err) {
-      // Error is already handled by the store
+      toast.error('Login error', {
+        description: 'An unexpected error occurred',
+      });
     }
   };
   
@@ -33,13 +54,13 @@ const AdminLogin = () => {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="heading-lg mb-2">Admin Login</h1>
+          <h1 className="text-2xl font-bold mb-2">Admin Login</h1>
           <p className="text-muted-foreground">
             Sign in to access the OOL Properties admin dashboard
           </p>
         </div>
         
-        <div className="bg-white p-8 rounded-xl shadow-elevation-1">
+        <div className="bg-white p-8 rounded-xl shadow-md">
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-medium">
@@ -50,7 +71,7 @@ const AdminLogin = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@oolproperties.com"
+                placeholder="admin@example.com"
                 required
                 className="w-full"
               />
@@ -69,9 +90,6 @@ const AdminLogin = () => {
                 required
                 className="w-full"
               />
-              <p className="text-xs text-muted-foreground">
-                For demo: admin@oolproperties.com / admin123
-              </p>
             </div>
             
             {error && (
