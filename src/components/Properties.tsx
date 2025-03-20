@@ -13,19 +13,8 @@ const Properties = () => {
     fetchProperties();
   }, [fetchProperties]);
   
-  // Select featured properties, if there are less than 3 featured properties,
-  // fill the rest with non-featured ones to always have 3 properties
-  const featuredProperties = properties.filter(p => p.featured);
-  const nonFeaturedProperties = properties.filter(p => !p.featured);
-  
-  const displayProperties = [...featuredProperties];
-  
-  if (displayProperties.length < 3) {
-    displayProperties.push(...nonFeaturedProperties.slice(0, 3 - displayProperties.length));
-  }
-  
-  // Limit to first 3 properties for the homepage
-  const limitedProperties = displayProperties.slice(0, 3);
+  // Get the top 3 most expensive properties
+  const topProperties = properties.slice(0, 3);
   
   return (
     <section id="properties" className="section-padding bg-slate-50">
@@ -48,7 +37,7 @@ const Properties = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {limitedProperties.map((property, index) => (
+            {topProperties.map((property, index) => (
               <PropertyCard 
                 key={property.id} 
                 property={property}

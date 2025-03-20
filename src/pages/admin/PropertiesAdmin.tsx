@@ -47,7 +47,7 @@ const PropertiesAdmin = () => {
   const emptyFormData: PropertyFormData = {
     title: '',
     description: '',
-    price: '',
+    price: 0,
     location: '',
     size: '',
     type: '',
@@ -64,7 +64,13 @@ const PropertiesAdmin = () => {
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Handle numeric price field
+    if (name === 'price') {
+      setFormData(prev => ({ ...prev, [name]: Number(value) }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
   
   const handleCheckboxChange = (checked: boolean) => {
@@ -76,10 +82,6 @@ const PropertiesAdmin = () => {
       await createProperty(formData);
       setIsAddDialogOpen(false);
       setFormData(emptyFormData);
-      toast({
-        title: 'Success',
-        description: 'Property added successfully',
-      });
     } catch (error) {
       toast({
         title: 'Error',
@@ -96,10 +98,6 @@ const PropertiesAdmin = () => {
       await updateProperty(currentPropertyId, formData);
       setIsEditDialogOpen(false);
       setCurrentPropertyId(null);
-      toast({
-        title: 'Success',
-        description: 'Property updated successfully',
-      });
     } catch (error) {
       toast({
         title: 'Error',
@@ -112,10 +110,6 @@ const PropertiesAdmin = () => {
   const handleDeleteProperty = async (id: string) => {
     try {
       await deleteProperty(id);
-      toast({
-        title: 'Success',
-        description: 'Property deleted successfully',
-      });
     } catch (error) {
       toast({
         title: 'Error',
@@ -125,7 +119,10 @@ const PropertiesAdmin = () => {
     }
   };
   
-  const openEditDialog = (property: PropertyFormData & { id: string }) => {
+  const openEditDialog = (propertyId: string) => {
+    const property = properties.find(p => p.id === propertyId);
+    if (!property) return;
+    
     setFormData({
       title: property.title,
       description: property.description,
@@ -136,8 +133,13 @@ const PropertiesAdmin = () => {
       featured: property.featured,
       image: property.image,
     });
-    setCurrentPropertyId(property.id);
+    setCurrentPropertyId(propertyId);
     setIsEditDialogOpen(true);
+  };
+  
+  // Format price for display
+  const formatPrice = (price: number) => {
+    return `NGN ${price.toLocaleString()}`;
   };
   
   // Filter properties based on search query
@@ -150,7 +152,7 @@ const PropertiesAdmin = () => {
   const propertyTypes = ['Residential', 'Commercial', 'Industrial', 'Land'];
   
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-hidden">
       <div className="flex justify-between items-center">
         <h1 className="heading-lg">Manage Properties</h1>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -180,13 +182,14 @@ const PropertiesAdmin = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="price" className="text-sm font-medium">Price</label>
+                  <label htmlFor="price" className="text-sm font-medium">Price (NGN)</label>
                   <Input
                     id="price"
                     name="price"
-                    value={formData.price}
+                    type="number"
+                    value={formData.price.toString()}
                     onChange={handleInputChange}
-                    placeholder="NGN 350,000,000"
+                    placeholder="350000000"
                   />
                 </div>
               </div>
@@ -297,11 +300,12 @@ const PropertiesAdmin = () => {
                 />
               </div>
               <div className="space-y-2">
-                <label htmlFor="edit-price" className="text-sm font-medium">Price</label>
+                <label htmlFor="edit-price" className="text-sm font-medium">Price (NGN)</label>
                 <Input
                   id="edit-price"
                   name="price"
-                  value={formData.price}
+                  type="number"
+                  value={formData.price.toString()}
                   onChange={handleInputChange}
                 />
               </div>
@@ -402,7 +406,7 @@ const PropertiesAdmin = () => {
       </div>
       
       {/* Properties Table */}
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -438,14 +442,14 @@ const PropertiesAdmin = () => {
                   </TableCell>
                   <TableCell>{property.location}</TableCell>
                   <TableCell>{property.type}</TableCell>
-                  <TableCell>{property.price}</TableCell>
+                  <TableCell>{formatPrice(property.price)}</TableCell>
                   <TableCell>{property.featured ? 'Yes' : 'No'}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => openEditDialog(property)}
+                        onClick={() => openEditDialog(property.id)}
                       >
                         <Edit className="h-4 w-4" />
                         <span className="sr-only">Edit</span>

@@ -7,7 +7,7 @@ interface PropertyCardProps {
     id: string;
     title: string;
     location: string;
-    price: string;
+    price: number;
     size: string;
     type: string;
     image: string;
@@ -17,6 +17,11 @@ interface PropertyCardProps {
 }
 
 const PropertyCard = ({ property, className }: PropertyCardProps) => {
+  // Format price from numeric to currency string
+  const formatPrice = (price: number) => {
+    return `NGN ${price.toLocaleString()}`;
+  };
+
   return (
     <div 
       className={cn(
@@ -49,7 +54,7 @@ const PropertyCard = ({ property, className }: PropertyCardProps) => {
         <h3 className="heading-sm mb-3">{property.title}</h3>
         
         <div className="flex justify-between items-center mb-4">
-          <div className="font-semibold text-real-700">{property.price}</div>
+          <div className="font-semibold text-real-700">{formatPrice(property.price)}</div>
         </div>
         
         <div className="flex items-center justify-between pt-4 border-t border-slate-100">

@@ -56,6 +56,11 @@ const PropertiesPage = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   
+  // Format price from numeric to currency string
+  const formatPrice = (price: number) => {
+    return `NGN ${price.toLocaleString()}`;
+  };
+  
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Hero Section */}
@@ -172,7 +177,10 @@ const PropertiesPage = () => {
                   {currentProperties.map((property, index) => (
                     <PropertyCard 
                       key={property.id} 
-                      property={property}
+                      property={{
+                        ...property,
+                        price: property.price // PropertyCard component will handle formatting
+                      }}
                       className={`animate-scale-in stagger-delay-${index + 1}`}
                     />
                   ))}

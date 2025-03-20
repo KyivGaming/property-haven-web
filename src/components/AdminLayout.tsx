@@ -147,7 +147,9 @@ const AdminLayout = () => {
             </div>
           </header>
           <main className="flex-1 p-6 overflow-auto">
-            <Outlet />
+            <div className="max-w-full overflow-x-auto">
+              <Outlet />
+            </div>
           </main>
         </SidebarInset>
       </div>

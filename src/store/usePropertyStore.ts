@@ -1,6 +1,8 @@
 
 import { create } from 'zustand';
 import { Property, PropertyFormData } from '@/types/property';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from "sonner";
 
 interface PropertyState {
   properties: Property[];
@@ -15,88 +17,6 @@ interface PropertyState {
   deleteProperty: (id: string) => Promise<void>;
 }
 
-// Mock data - this will be replaced with Supabase integration
-const mockProperties: Property[] = [
-  {
-    id: '1',
-    title: 'Modern Office Building',
-    description: 'A sleek, contemporary office building with state-of-the-art facilities in the heart of Lagos business district.',
-    location: 'Lagos, Nigeria',
-    price: 'NGN 350,000,000',
-    size: '12,000 sq ft',
-    type: 'Commercial',
-    featured: true,
-    image: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '2',
-    title: 'Prime Development Land',
-    description: 'Strategic land parcel ideal for residential or mixed-use development with excellent access to major highways.',
-    location: 'Abuja, Nigeria',
-    price: 'NGN 75,000,000',
-    size: '5 acres',
-    type: 'Land',
-    featured: false,
-    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '3',
-    title: 'Luxury Residential Complex',
-    description: 'Elite residential complex featuring premium apartments with world-class amenities including swimming pool, gym, and 24/7 security.',
-    location: 'Port Harcourt, Nigeria',
-    price: 'NGN 520,000,000',
-    size: '35,000 sq ft',
-    type: 'Residential',
-    featured: false,
-    image: 'https://images.unsplash.com/photo-1460317442991-0ec209397118?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '4',
-    title: 'Waterfront Retail Space',
-    description: 'Premium retail space with stunning waterfront views, perfect for high-end boutiques or restaurants.',
-    location: 'Lagos, Nigeria',
-    price: 'NGN 180,000,000',
-    size: '8,500 sq ft',
-    type: 'Commercial',
-    featured: false,
-    image: 'https://images.unsplash.com/photo-1582037928769-181cf1066a8b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '5',
-    title: 'Industrial Warehouse',
-    description: 'Spacious industrial warehouse with modern logistics infrastructure, located near major transportation routes.',
-    location: 'Kano, Nigeria',
-    price: 'NGN 230,000,000',
-    size: '40,000 sq ft',
-    type: 'Industrial',
-    featured: true,
-    image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '6',
-    title: 'Agricultural Farm Land',
-    description: 'Fertile agricultural land suitable for various crops, with irrigation systems already in place.',
-    location: 'Ibadan, Nigeria',
-    price: 'NGN 45,000,000',
-    size: '20 acres',
-    type: 'Land',
-    featured: false,
-    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
-
 export const usePropertyStore = create<PropertyState>((set, get) => ({
   properties: [],
   isLoading: false,
@@ -106,12 +26,31 @@ export const usePropertyStore = create<PropertyState>((set, get) => ({
     set({ isLoading: true, error: null });
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const { data, error } = await supabase
+        .from('properties')
+        .select('*')
+        .order('price', { ascending: false });
       
-      // In a real implementation, this would be a Supabase call
-      set({ properties: mockProperties, isLoading: false });
+      if (error) throw error;
+      
+      // Transform the data to match our property interface
+      const properties = data.map(item => ({
+        id: item.id,
+        title: item.title,
+        description: item.description,
+        price: item.price,
+        location: item.location,
+        size: item.size,
+        type: item.type,
+        featured: item.featured,
+        image: item.image,
+        createdAt: item.created_at,
+        updatedAt: item.updated_at
+      }));
+      
+      set({ properties, isLoading: false });
     } catch (error) {
+      console.error('Error fetching properties:', error);
       set({ 
         error: error instanceof Error ? error.message : 'Unknown error occurred',
         isLoading: false 
@@ -127,26 +66,53 @@ export const usePropertyStore = create<PropertyState>((set, get) => ({
     set({ isLoading: true, error: null });
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const { data, error } = await supabase
+        .from('properties')
+        .insert([{
+          title: propertyData.title,
+          description: propertyData.description,
+          price: propertyData.price,
+          location: propertyData.location,
+          size: propertyData.size,
+          type: propertyData.type,
+          featured: propertyData.featured,
+          image: propertyData.image
+        }])
+        .select();
       
-      // Create new property
-      const newProperty: Property = {
-        ...propertyData,
-        id: Math.random().toString(36).substring(2, 11),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+      if (error) throw error;
       
-      // Update state
-      set(state => ({
-        properties: [...state.properties, newProperty],
-        isLoading: false
-      }));
+      if (data && data.length > 0) {
+        const newProperty = {
+          id: data[0].id,
+          title: data[0].title,
+          description: data[0].description,
+          price: data[0].price,
+          location: data[0].location,
+          size: data[0].size,
+          type: data[0].type,
+          featured: data[0].featured,
+          image: data[0].image,
+          createdAt: data[0].created_at,
+          updatedAt: data[0].updated_at
+        };
+        
+        set(state => ({
+          properties: [newProperty, ...state.properties],
+          isLoading: false
+        }));
+        
+        toast.success("Property created successfully");
+      }
     } catch (error) {
+      console.error('Error creating property:', error);
       set({ 
         error: error instanceof Error ? error.message : 'Failed to create property',
         isLoading: false 
+      });
+      
+      toast.error("Failed to create property", {
+        description: error instanceof Error ? error.message : 'Unknown error'
       });
     }
   },
@@ -155,26 +121,56 @@ export const usePropertyStore = create<PropertyState>((set, get) => ({
     set({ isLoading: true, error: null });
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const { data, error } = await supabase
+        .from('properties')
+        .update({
+          ...(propertyData.title && { title: propertyData.title }),
+          ...(propertyData.description && { description: propertyData.description }),
+          ...(propertyData.price !== undefined && { price: propertyData.price }),
+          ...(propertyData.location && { location: propertyData.location }),
+          ...(propertyData.size && { size: propertyData.size }),
+          ...(propertyData.type && { type: propertyData.type }),
+          ...(propertyData.featured !== undefined && { featured: propertyData.featured }),
+          ...(propertyData.image && { image: propertyData.image })
+        })
+        .eq('id', id)
+        .select();
       
-      // Update property
-      set(state => {
-        const updatedProperties = state.properties.map(property => 
-          property.id === id 
-            ? { 
-                ...property, 
-                ...propertyData, 
-                updatedAt: new Date().toISOString() 
-              } 
-            : property
-        );
-        return { properties: updatedProperties, isLoading: false };
-      });
+      if (error) throw error;
+      
+      if (data && data.length > 0) {
+        const updatedProperty = {
+          id: data[0].id,
+          title: data[0].title,
+          description: data[0].description,
+          price: data[0].price,
+          location: data[0].location,
+          size: data[0].size,
+          type: data[0].type,
+          featured: data[0].featured,
+          image: data[0].image,
+          createdAt: data[0].created_at,
+          updatedAt: data[0].updated_at
+        };
+        
+        set(state => ({
+          properties: state.properties.map(property => 
+            property.id === id ? updatedProperty : property
+          ),
+          isLoading: false
+        }));
+        
+        toast.success("Property updated successfully");
+      }
     } catch (error) {
+      console.error('Error updating property:', error);
       set({ 
         error: error instanceof Error ? error.message : 'Failed to update property',
         isLoading: false 
+      });
+      
+      toast.error("Failed to update property", {
+        description: error instanceof Error ? error.message : 'Unknown error'
       });
     }
   },
@@ -183,18 +179,28 @@ export const usePropertyStore = create<PropertyState>((set, get) => ({
     set({ isLoading: true, error: null });
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const { error } = await supabase
+        .from('properties')
+        .delete()
+        .eq('id', id);
       
-      // Delete property
+      if (error) throw error;
+      
       set(state => ({
         properties: state.properties.filter(property => property.id !== id),
         isLoading: false
       }));
+      
+      toast.success("Property deleted successfully");
     } catch (error) {
+      console.error('Error deleting property:', error);
       set({ 
         error: error instanceof Error ? error.message : 'Failed to delete property',
         isLoading: false 
+      });
+      
+      toast.error("Failed to delete property", {
+        description: error instanceof Error ? error.message : 'Unknown error'
       });
     }
   },
