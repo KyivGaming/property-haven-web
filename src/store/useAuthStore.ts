@@ -36,25 +36,6 @@ export const useAuthStore = create<AuthState>()(
           if (error) throw error;
           
           if (data?.user) {
-            // Check if the user is an admin
-            const { data: adminData, error: adminError } = await supabase
-              .from('admin_users')
-              .select('*')
-              .eq('id', data.user.id)
-              .single();
-              
-            if (adminError) {
-              console.error('Admin check error:', adminError);
-              await supabase.auth.signOut();
-              throw new Error(`Admin verification failed: ${adminError.message}`);
-            }
-            
-            if (!adminData) {
-              console.error('Not an admin user:', data.user.email);
-              await supabase.auth.signOut();
-              throw new Error('Not authorized as admin. This account is not registered as an admin.');
-            }
-            
             set({ 
               user: { id: data.user.id, email: data.user.email || '' },
               isAuthenticated: true,
@@ -98,34 +79,24 @@ export const useAuthStore = create<AuthState>()(
           const { data } = await supabase.auth.getSession();
           
           if (data.session?.user) {
-            // Verify the user is an admin
-            const { data: adminData, error: adminError } = await supabase
-              .from('admin_users')
-              .select('*')
-              .eq('id', data.session.user.id)
-              .single();
-              
-            if (!adminError && adminData) {
-              set({ 
-                user: { 
-                  id: data.session.user.id, 
-                  email: data.session.user.email || '' 
-                },
-                isAuthenticated: true,
-                isLoading: false,
-                error: null
-              });
-              return;
-            }
+            set({ 
+              user: { 
+                id: data.session.user.id, 
+                email: data.session.user.email || '' 
+              },
+              isAuthenticated: true,
+              isLoading: false,
+              error: null
+            });
+          } else {
+            // If we got here, user is not authenticated
+            set({ 
+              user: null, 
+              isAuthenticated: false, 
+              isLoading: false, 
+              error: null 
+            });
           }
-          
-          // If we got here, user is not authenticated or not an admin
-          set({ 
-            user: null, 
-            isAuthenticated: false, 
-            isLoading: false, 
-            error: null 
-          });
         } catch (error) {
           set({ 
             user: null,
