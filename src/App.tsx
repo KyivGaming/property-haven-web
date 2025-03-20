@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 import PropertiesPage from "./pages/PropertiesPage";
+import ServicesPage from "./pages/ServicesPage";
 import AdminLogin from "./pages/AdminLogin";
 import AdminLayout from "./components/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
@@ -17,6 +18,8 @@ import PropertiesAdmin from "./pages/admin/PropertiesAdmin";
 import InquiriesAdmin from "./pages/admin/InquiriesAdmin";
 import UsersAdmin from "./pages/admin/UsersAdmin";
 import SettingsAdmin from "./pages/admin/SettingsAdmin";
+import ContactsAdmin from "./pages/admin/ContactsAdmin";
+import NewsletterAdmin from "./pages/admin/NewsletterAdmin";
 
 const queryClient = new QueryClient();
 
@@ -54,13 +57,16 @@ const App = () => {
             <Route path="/" element={<Index />} />
             <Route path="/about" element={<About />} />
             <Route path="/properties" element={<PropertiesPage />} />
+            <Route path="/services" element={<ServicesPage />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             
             {/* Admin Routes */}
-            <Route path="/admin" element={<AdminLayout />}>
+            <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="properties" element={<PropertiesAdmin />} />
               <Route path="inquiries" element={<InquiriesAdmin />} />
+              <Route path="contacts" element={<ContactsAdmin />} />
+              <Route path="newsletter" element={<NewsletterAdmin />} />
               <Route path="users" element={<UsersAdmin />} />
               <Route path="settings" element={<SettingsAdmin />} />
               <Route path="" element={<Navigate to="/admin/dashboard" replace />} />

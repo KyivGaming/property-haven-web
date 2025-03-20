@@ -1,8 +1,45 @@
 
 import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
+import { useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !email.includes('@')) {
+      toast.error('Invalid email', {
+        description: 'Please enter a valid email address',
+      });
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      const { error } = await supabase
+        .from('newsletters')
+        .insert([{ email }]);
+        
+      if (error) throw error;
+      
+      setEmail('');
+      toast.success('Subscription successful', {
+        description: 'Thank you for subscribing to our newsletter!',
+      });
+    } catch (error) {
+      console.error('Error subscribing to newsletter:', error);
+      toast.error('Subscription failed', {
+        description: 'Please try again later.',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   
   return (
     <footer className="bg-real-950 text-white pt-16 pb-8">
@@ -69,17 +106,22 @@ const Footer = () => {
             <p className="text-slate-300 mb-4">
               Subscribe to our newsletter for the latest property listings and market insights.
             </p>
-            <form className="flex">
+            <form className="flex" onSubmit={handleSubscribe}>
               <input 
                 type="email" 
                 placeholder="Your email address" 
                 className="bg-real-900 text-white px-4 py-2 rounded-l-lg flex-grow focus:outline-none focus:ring-1 focus:ring-real-400"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isSubmitting}
+                required
               />
               <button 
                 type="submit" 
-                className="bg-real-700 hover:bg-real-600 text-white px-4 py-2 rounded-r-lg transition-colors"
+                className="bg-real-700 hover:bg-real-600 text-white px-4 py-2 rounded-r-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                disabled={isSubmitting}
               >
-                Subscribe
+                {isSubmitting ? 'Sending...' : 'Subscribe'}
               </button>
             </form>
           </div>

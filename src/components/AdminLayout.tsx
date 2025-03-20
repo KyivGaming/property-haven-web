@@ -7,6 +7,7 @@ import {
   LayoutDashboard, 
   ListChecks, 
   LogOut, 
+  Mail,
   MessageSquare, 
   Settings, 
   Users 
@@ -95,6 +96,22 @@ const AdminLayout = () => {
                       <a href="/admin/inquiries">
                         <MessageSquare />
                         <span>Inquiries</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <a href="/admin/contacts">
+                        <MessageSquare />
+                        <span>Contact Messages</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <a href="/admin/newsletter">
+                        <Mail />
+                        <span>Newsletter</span>
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

@@ -52,9 +52,9 @@ const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             <RouterLink to="/" className="nav-link">Home</RouterLink>
-            <a href="/#about" className="nav-link">About</a>
+            <RouterLink to="/about" className="nav-link">About</RouterLink>
             <RouterLink to="/properties" className="nav-link">Properties</RouterLink>
-            <a href="/#services" className="nav-link">Services</a>
+            <RouterLink to="/services" className="nav-link">Services</RouterLink>
             <a href="/#contact" className="nav-link">Contact</a>
           </nav>
           
@@ -107,14 +107,14 @@ const Header = () => {
               Home
               <ChevronRight size={16} className="ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
             </RouterLink>
-            <a 
-              href="/#about" 
+            <RouterLink 
+              to="/about" 
               className="text-xl font-medium text-white group flex items-center"
               onClick={handleMobileLinkClick}
             >
               About
               <ChevronRight size={16} className="ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-            </a>
+            </RouterLink>
             <RouterLink 
               to="/properties" 
               className="text-xl font-medium text-white group flex items-center"
@@ -123,14 +123,14 @@ const Header = () => {
               Properties
               <ChevronRight size={16} className="ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
             </RouterLink>
-            <a 
-              href="/#services" 
+            <RouterLink 
+              to="/services" 
               className="text-xl font-medium text-white group flex items-center"
               onClick={handleMobileLinkClick}
             >
               Services
               <ChevronRight size={16} className="ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-            </a>
+            </RouterLink>
             <a 
               href="/#contact" 
               className="text-xl font-medium text-white group flex items-center"
