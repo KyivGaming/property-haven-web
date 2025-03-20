@@ -2,9 +2,11 @@
 import { useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton'; 
 import PropertyCard from './PropertyCard';
 import { usePropertyStore } from '@/store/usePropertyStore';
 import { Link } from 'react-router-dom';
+import { Progress } from '@/components/ui/progress';
 
 const Properties = () => {
   const { properties, fetchProperties, isLoading } = usePropertyStore();
@@ -30,10 +32,27 @@ const Properties = () => {
         
         {/* Properties grid */}
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-96 animate-pulse bg-slate-200 rounded-xl"></div>
-            ))}
+          <div className="space-y-8">
+            <div className="w-full">
+              <Progress value={40} className="w-full mb-4" />
+              <p className="text-center text-sm text-muted-foreground">Loading properties...</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="rounded-xl overflow-hidden shadow-elevation-1">
+                  <Skeleton className="h-64 w-full" />
+                  <div className="p-6 space-y-3">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-6 w-full" />
+                    <Skeleton className="h-4 w-32" />
+                    <div className="pt-4 flex justify-between">
+                      <Skeleton className="h-4 w-20" />
+                      <Skeleton className="h-4 w-20" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">

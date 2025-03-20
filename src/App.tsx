@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useEffect } from "react";
 import Index from "./pages/Index";
+import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 import PropertiesPage from "./pages/PropertiesPage";
 import AdminLogin from "./pages/AdminLogin";
@@ -51,6 +52,7 @@ const App = () => {
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Index />} />
+            <Route path="/about" element={<About />} />
             <Route path="/properties" element={<PropertiesPage />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             
