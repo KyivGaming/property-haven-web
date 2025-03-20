@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, Tables } from '@/integrations/supabase/client';
 import { ContactFormData } from '@/types/contact';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatDistanceToNow } from 'date-fns';
@@ -16,11 +16,23 @@ const ContactsAdmin = () => {
         const { data, error } = await supabase
           .from('contacts')
           .select('*')
-          .order('created_at', { ascending: false });
+          .order('created_at', { ascending: false }) as { data: Tables['contacts']['Row'][] | null, error: any };
           
         if (error) throw error;
         
-        setContacts(data || []);
+        // Transform the data to match the ContactFormData type
+        if (data) {
+          const formattedContacts: ContactFormData[] = data.map(contact => ({
+            id: contact.id,
+            name: contact.name,
+            email: contact.email,
+            phone: contact.phone || '',
+            message: contact.message,
+            createdAt: contact.created_at
+          }));
+          
+          setContacts(formattedContacts);
+        }
       } catch (error) {
         console.error('Error fetching contacts:', error);
       } finally {

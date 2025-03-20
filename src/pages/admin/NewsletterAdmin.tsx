@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, Tables } from '@/integrations/supabase/client';
 import { NewsletterSubscriber } from '@/types/newsletter';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatDistanceToNow } from 'date-fns';
@@ -22,11 +22,20 @@ const NewsletterAdmin = () => {
       const { data, error } = await supabase
         .from('newsletters')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false }) as { data: Tables['newsletters']['Row'][] | null, error: any };
         
       if (error) throw error;
       
-      setSubscribers(data || []);
+      // Transform the data to match the NewsletterSubscriber type
+      if (data) {
+        const formattedSubscribers: NewsletterSubscriber[] = data.map(subscriber => ({
+          id: subscriber.id,
+          email: subscriber.email,
+          createdAt: subscriber.created_at
+        }));
+        
+        setSubscribers(formattedSubscribers);
+      }
     } catch (error) {
       console.error('Error fetching newsletter subscribers:', error);
       toast.error('Failed to load subscribers', {

@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { MapPin, Mail, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, Tables } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { ContactFormData } from '@/types/contact';
 
@@ -25,9 +25,17 @@ const Contact = () => {
     setIsSubmitting(true);
     
     try {
+      // Cast the formData to the correct Insert type
+      const contactData: Tables['contacts']['Insert'] = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || null,
+        message: formData.message,
+      };
+      
       const { error } = await supabase
         .from('contacts')
-        .insert([formData]);
+        .insert([contactData] as any); // Using 'as any' as a temporary fix
         
       if (error) throw error;
       

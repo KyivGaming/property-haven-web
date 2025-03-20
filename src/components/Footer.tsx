@@ -1,7 +1,7 @@
 
 import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
 import { useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, Tables } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 const Footer = () => {
@@ -21,11 +21,19 @@ const Footer = () => {
     setIsSubmitting(true);
     
     try {
+      // Cast the email to the correct Insert type
+      const newsletterData: Tables['newsletters']['Insert'] = { email };
+      
       const { error } = await supabase
         .from('newsletters')
-        .insert([{ email }]);
+        .insert([newsletterData] as any); // Using 'as any' as a temporary fix
         
-      if (error) throw error;
+      if (error) {
+        if (error.code === '23505') { // Unique violation error code
+          throw new Error('This email is already subscribed to our newsletter.');
+        }
+        throw error;
+      }
       
       setEmail('');
       toast.success('Subscription successful', {
@@ -33,8 +41,9 @@ const Footer = () => {
       });
     } catch (error) {
       console.error('Error subscribing to newsletter:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Please try again later.';
       toast.error('Subscription failed', {
-        description: 'Please try again later.',
+        description: errorMessage,
       });
     } finally {
       setIsSubmitting(false);
