@@ -43,4 +43,29 @@ export type Tables = {
       created_at?: string;
     };
   };
+  admin_profiles: {
+    Row: {
+      id: string;
+      first_name: string | null;
+      last_name: string | null;
+      role: string;
+      created_at: string;
+      updated_at: string;
+    };
+    Insert: {
+      id: string;
+      first_name?: string | null;
+      last_name?: string | null;
+      role?: string;
+      created_at?: string;
+      updated_at?: string;
+    };
+    Update: {
+      id?: string;
+      first_name?: string | null;
+      last_name?: string | null;
+      role?: string;
+      updated_at?: string;
+    };
+  };
 };

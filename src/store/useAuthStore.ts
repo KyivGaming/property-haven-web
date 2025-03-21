@@ -14,6 +14,7 @@ interface AuthState {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   checkSession: () => Promise<void>;
+  updatePassword: (password: string) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -103,6 +104,33 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: false,
             isLoading: false,
             error: error instanceof Error ? error.message : 'Session check failed'
+          });
+        }
+      },
+
+      updatePassword: async (password: string) => {
+        set({ isLoading: true, error: null });
+        
+        try {
+          const { error } = await supabase.auth.updateUser({
+            password
+          });
+          
+          if (error) throw error;
+          
+          set({ isLoading: false });
+          
+          toast.success('Password updated', {
+            description: 'Your password has been updated successfully',
+          });
+        } catch (error) {
+          set({ 
+            error: error instanceof Error ? error.message : 'Password update failed',
+            isLoading: false 
+          });
+          
+          toast.error('Password update failed', {
+            description: error instanceof Error ? error.message : 'Failed to update password',
           });
         }
       }
