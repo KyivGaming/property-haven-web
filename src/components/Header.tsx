@@ -11,7 +11,7 @@ const Header = () => {
   // Handle scroll event to change header appearance
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      setIsScrolled(window.scrollY > 0);
     };
     
     window.addEventListener('scroll', handleScroll);
@@ -55,7 +55,6 @@ const Header = () => {
             <RouterLink to="/about" className="nav-link">About</RouterLink>
             <RouterLink to="/properties" className="nav-link">Properties</RouterLink>
             <RouterLink to="/services" className="nav-link">Services</RouterLink>
-            <a href="/#contact" className="nav-link">Contact</a>
           </nav>
           
           {/* Admin link and mobile menu toggle */}
@@ -131,14 +130,6 @@ const Header = () => {
               Services
               <ChevronRight size={16} className="ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
             </RouterLink>
-            <a 
-              href="/#contact" 
-              className="text-xl font-medium text-white group flex items-center"
-              onClick={handleMobileLinkClick}
-            >
-              Contact
-              <ChevronRight size={16} className="ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-            </a>
             <RouterLink 
               to="/admin/login" 
               className="text-xl font-medium text-white group flex items-center"
