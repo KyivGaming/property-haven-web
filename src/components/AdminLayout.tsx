@@ -60,7 +60,7 @@ const AdminLayout = () => {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
-        <Sidebar variant="inset">
+        <Sidebar variant="sidebar">
           <SidebarHeader>
             <div className="flex items-center px-2 py-4">
               <Building className="h-8 w-8 text-primary mr-2" />
@@ -93,17 +93,9 @@ const AdminLayout = () => {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <a href="/admin/inquiries">
-                        <MessageSquare />
-                        <span>Inquiries</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
                       <a href="/admin/contacts">
                         <MessageSquare />
-                        <span>Contact Messages</span>
+                        <span>Messages</span>
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -115,14 +107,7 @@ const AdminLayout = () => {
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <a href="/admin/users">
-                        <Users />
-                        <span>Users</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>

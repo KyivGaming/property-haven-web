@@ -15,8 +15,6 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminLayout from "./components/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import PropertiesAdmin from "./pages/admin/PropertiesAdmin";
-import InquiriesAdmin from "./pages/admin/InquiriesAdmin";
-import UsersAdmin from "./pages/admin/UsersAdmin";
 import SettingsAdmin from "./pages/admin/SettingsAdmin";
 import ContactsAdmin from "./pages/admin/ContactsAdmin";
 import NewsletterAdmin from "./pages/admin/NewsletterAdmin";
@@ -64,10 +62,8 @@ const App = () => {
             <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="properties" element={<PropertiesAdmin />} />
-              <Route path="inquiries" element={<InquiriesAdmin />} />
               <Route path="contacts" element={<ContactsAdmin />} />
               <Route path="newsletter" element={<NewsletterAdmin />} />
-              <Route path="users" element={<UsersAdmin />} />
               <Route path="settings" element={<SettingsAdmin />} />
               <Route path="" element={<Navigate to="/admin/dashboard" replace />} />
             </Route>
