@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
 import { useState } from 'react';
@@ -54,7 +55,7 @@ const Footer = () => {
     <footer className="bg-real-950 text-white pt-16 pb-8">
       <div className="container-custom">
         {/* Footer top */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16">
           {/* Company info */}
           <div>
             <h3 className="text-xl font-display font-bold mb-6">OOL Properties</h3>
@@ -80,23 +81,6 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-6">Quick Links</h3>
             <ul className="space-y-3">
               {quickLinks.map((link, index) => (
-                <li key={index}>
-                  <a 
-                    href={link.href} 
-                    className="text-slate-300 hover:text-white transition-colors"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          {/* Services */}
-          <div>
-            <h3 className="text-lg font-semibold mb-6">Our Services</h3>
-            <ul className="space-y-3">
-              {servicesLinks.map((link, index) => (
                 <li key={index}>
                   <a 
                     href={link.href} 

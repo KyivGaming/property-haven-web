@@ -59,7 +59,7 @@ const AdminLayout = () => {
   
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex flex-col w-full">
+      <div className="min-h-screen flex w-full">
         <Sidebar variant="inset">
           <SidebarHeader>
             <div className="flex items-center px-2 py-4">

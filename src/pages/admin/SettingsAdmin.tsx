@@ -192,7 +192,7 @@ const SettingsAdmin = () => {
           </Card>
         </TabsContent>
         
-        <TabsContent value="account" className="space-y-4 pt-4">
+        <TabsContent value="account" className="space-y-4 pt-4 max-w-md">
           <Card>
             <CardHeader>
               <CardTitle>Account Security</CardTitle>

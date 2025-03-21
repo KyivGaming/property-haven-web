@@ -16,7 +16,7 @@ const Hero = () => {
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/95 z-10"></div>
         <img
-          src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
+          src="https://eystone.ng/wp-content/uploads/2022/04/real-estate-living.jpg"
           alt="Luxury Property"
           className="w-full h-full object-cover"
         />
@@ -28,10 +28,10 @@ const Hero = () => {
           <div className="animate-fade-down">
             <span className="tag bg-primary/10 text-primary mb-6">Premium Real Estate Investment</span>
           </div>
-          <h1 className="heading-xl mb-6 text-white drop-shadow-md animate-fade-down stagger-delay-1">
+          <h1 className="heading-xl mb-6 text-black drop-shadow-md animate-fade-down stagger-delay-1">
             Unlock Your Real Estate Investment Potential
           </h1>
-          <p className="subtitle-lg text-white/90 mb-10 max-w-2xl mx-auto animate-fade-down stagger-delay-2">
+          <p className="subtitle-lg text-black/90 mb-10 max-w-2xl mx-auto animate-fade-down stagger-delay-2">
             OOL Properties offers expert consulting and premium real estate solutions tailored to maximize your investment returns.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-up stagger-delay-3">
